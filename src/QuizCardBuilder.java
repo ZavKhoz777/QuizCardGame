@@ -21,6 +21,7 @@ public class QuizCardBuilder {
 
     public void go(){
         frame = new JFrame("Quiz Card Builder");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JPanel mainPanel = new JPanel();
         Font bigFont = new Font("sanserif", Font.BOLD, 24);
         question = new JTextArea(6,20);
@@ -85,9 +86,22 @@ public class QuizCardBuilder {
             }
         });
 
+        JMenu playMenu = new JMenu("Play");
+        JMenuItem forPlayItem = new JMenuItem("Play game");
+        forPlayItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                QuizCardPlayer player = new QuizCardPlayer();
+                player.go();
+            }
+        });
+
         fileMenu.add(newMenuItem);
         fileMenu.add(saveMenuItem);
+        playMenu.add(forPlayItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(playMenu);
         frame.setJMenuBar(menuBar);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         frame.setSize(500,600);

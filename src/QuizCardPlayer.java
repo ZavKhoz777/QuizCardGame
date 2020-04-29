@@ -2,13 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
-public class QuizCardPlayer {
+public class QuizCardPlayer implements Serializable{
     private JTextArea display;
     private JTextArea answer;
     private ArrayList<QuizCard> cardList;
@@ -18,6 +15,7 @@ public class QuizCardPlayer {
     private JButton nextButton;
     private boolean isShowAnswer;
 
+
     public static void main(String[] args) {
         QuizCardPlayer reader = new QuizCardPlayer();
         reader.go();
@@ -25,6 +23,7 @@ public class QuizCardPlayer {
 
     public void go() {
         frame = new JFrame("Quiz Card Player");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JPanel mainPanel = new JPanel();
         Font bigFont = new Font("sanserif", Font.BOLD, 24);
 
@@ -43,6 +42,7 @@ public class QuizCardPlayer {
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 if (isShowAnswer){
                     display.setText(currentCard.getAnswer());
                     isShowAnswer = false;
@@ -68,13 +68,33 @@ public class QuizCardPlayer {
                 loadFile(fileOpen.getSelectedFile());
             }
         });
+        JMenuItem createCardItem = new JMenuItem("Create new cards");
+        createCardItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                QuizCardBuilder builder = new QuizCardBuilder();
+                builder.go();
+            }
+        });
         fileMenu.add(loadMenuItem);
+        fileMenu.add(createCardItem);
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         frame.setSize(640,500);
         frame.setVisible(true);
+        openCards();
     }
+
+    private void openCards(){
+        while (true){
+            JFileChooser fileOpen = new JFileChooser();
+            fileOpen.showOpenDialog(frame);
+            loadFile(fileOpen.getSelectedFile());
+            if (cardList != null) break;
+        }
+    }
+
 
     private void loadFile(File file){
         cardList = new ArrayList<QuizCard>();
